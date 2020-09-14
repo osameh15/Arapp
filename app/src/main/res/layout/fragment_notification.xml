@@ -26,7 +26,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:scrollbars="none"/>
+        android:scrollbars="none"
+        android:visibility="gone"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadingNotification"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="50dp"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="loading.json"
+            android:visibility="visible"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 

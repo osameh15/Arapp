@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             folding-cell:animationDuration="1200"
             folding-cell:backSideColor="@android:color/transparent"
-            folding-cell:additionalFlipsCount="2"
+            folding-cell:additionalFlipsCount="3"
             folding-cell:cameraHeight="32">
 
             <RelativeLayout

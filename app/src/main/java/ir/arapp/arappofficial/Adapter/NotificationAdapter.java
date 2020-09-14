@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.ramotion.foldingcell.FoldingCell;
 
@@ -25,9 +26,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private ArrayList<NotificationItem> notificationItems;
 
     //Constructor
-    public NotificationAdapter(Context mContext)
+
+
+    public NotificationAdapter(Context mContext, ArrayList<NotificationItem> notificationItems)
     {
         this.mContext = mContext;
+        this.notificationItems = notificationItems;
     }
 
     //Set data in notification
@@ -55,10 +59,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         {
             return;
         }
-        holder.messageImageContent.setImageResource(notificationItem.getImage());
+        Glide
+                .with(mContext)
+                .load(notificationItem.getImage())
+                .placeholder(R.drawable.arapp_news)
+                .error(R.drawable.arapp_news)
+                .override(500, 200)
+                .into(holder.messageImageContent);
         holder.messageTitle.setText(notificationItem.getTitle());
         holder.messageSubtitle.setText(notificationItem.getSubtitle());
-        holder.messageSubtitleContent.setText(notificationItem.getSubtitle());
+        holder.messageSubtitleContent.setText(notificationItem.getTitle());
         holder.messageTextContent.setText(notificationItem.getText());
         holder.foldingCell.setOnClickListener(v -> holder.foldingCell.toggle(false));
     }
@@ -81,7 +91,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     static class NotificationAdapterHolder extends RecyclerView.ViewHolder
     {
         private FoldingCell foldingCell;
-        private RoundedImageView messageImage;
         private RoundedImageView messageImageContent;
         private TextView messageTitle;
         private TextView messageSubtitle;
@@ -92,7 +101,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         {
             super(itemView);
             foldingCell = itemView.findViewById(R.id.foldingCell);
-            messageImage = itemView.findViewById(R.id.messageImage);
             messageImageContent = itemView.findViewById(R.id.messageImageContent);
             messageTitle = itemView.findViewById(R.id.messageTitle);
             messageSubtitle = itemView.findViewById(R.id.messageSubtitle);

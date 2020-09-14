@@ -18,21 +18,36 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.muddzdev.styleabletoast.StyleableToast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import ir.arapp.arappofficial.Adapter.CategoryItemAdapter;
 import ir.arapp.arappofficial.Adapter.NotificationAdapter;
 import ir.arapp.arappofficial.AppService.DrawerLocker;
+import ir.arapp.arappofficial.AppService.RetrofitClient;
+import ir.arapp.arappofficial.Data.CategoryItem;
 import ir.arapp.arappofficial.Data.NotificationItem;
 import ir.arapp.arappofficial.R;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NotificationFragment extends Fragment
 {
     //Variables
+    private LottieAnimationView lottieAnimationView;
     private RecyclerView recyclerView;
-    private NotificationAdapter notificationAdapter;
+    private NotificationAdapter adapter;
+    ArrayList<NotificationItem> notificationItem;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -47,17 +62,15 @@ public class NotificationFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_notification, container, false);
 
         //Hooks
+        lottieAnimationView = view.findViewById(R.id.loadingNotification);
         recyclerView = view.findViewById(R.id.notificationRecyclerView);
 
-        //RecyclerView
-        //Layout manager for RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(Objects.requireNonNull(getActivity()).getApplicationContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setFocusable(false);
-        //set Adapter
-        notificationAdapter = new NotificationAdapter(getActivity().getApplicationContext());
-        notificationAdapter.setData(getDataNotification());
-        recyclerView.setAdapter(notificationAdapter);
+        //getData
+        if (checkConnection())
+        {
+            notificationItem = new ArrayList<>();
+            getData();
+        }
 
         //Drawer layout
         ((DrawerLocker) Objects.requireNonNull(getActivity())).setDrawerLocked(true);
@@ -100,11 +113,60 @@ public class NotificationFragment extends Fragment
     }
 
     //get notification Data
-    private ArrayList<NotificationItem> getDataNotification()
+    private void getData()
     {
-        ArrayList<NotificationItem> notificationItem = new ArrayList<>();
-        notificationItem.add(new NotificationItem(R.drawable.arapp_news,"آراپ","به برنامه آراپ خوش آمدید","از اینکه آراپ را انتخاب کردید سپاسگزاریم. تمامی دوستان اینجا تمام توان خود را به کار خواهند گرفت تا بهترین ها را برای شما ایجاد کنند. به پاس قدردانی شما، گروه پشتیبانی آراپ به صورت 24 ساعته در خدمت رسانی به شما آماده است"));
-        notificationItem.add(new NotificationItem(R.drawable.notification,"تخفیف ویژه!","50% تخفیف فقط تا پایان جمعه","تولیدی بهترین شامپو در ایران تا پایان روز جمعه سرویس های خود را با 50% تخفیف عرضه می کند. همین الآن اقدام کنید"));
-        return notificationItem;
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .getNotification();
+
+        call.enqueue(new Callback<ResponseBody>()
+        {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+            {
+                if (response.isSuccessful())
+                {
+                    try
+                    {
+                        String responseBody = Objects.requireNonNull(response.body()).string();
+                        JSONArray jsonArray = new JSONArray(responseBody);
+                        for (int i = 0; i < jsonArray.length(); i++)
+                        {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            String title = jsonObject.getString("title");
+                            String subtitle = jsonObject.getString("subtitle");
+                            String text = jsonObject.getString("text");
+                            String image = jsonObject.getString("image");
+                            int visible = jsonObject.getInt("visible");
+                            String created_at = jsonObject.getString("created_at");
+                            notificationItem.add(new NotificationItem(id, title, subtitle, text, image, visible, created_at));
+                        }
+                        setAdapter();
+                    }
+                    catch (IOException | JSONException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t)
+            {
+                StyleableToast.makeText(Objects.requireNonNull(getContext()), t.getMessage(), Toast.LENGTH_LONG, R.style.toastTheme).show();
+            }
+        });
+    }
+    //set Recycler view adapter
+    private void setAdapter()
+    {
+        lottieAnimationView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        adapter = new NotificationAdapter(getContext(), notificationItem);
+        recyclerView.setAdapter(adapter);
     }
 }

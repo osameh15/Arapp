@@ -116,4 +116,7 @@ public interface Api
 
     @GET("getCategory")
     Call<ResponseBody> getCategory();
+
+    @GET("getNotification")
+    Call<ResponseBody> getNotification();
 }
