@@ -16,26 +16,43 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.muddzdev.styleabletoast.StyleableToast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import ir.arapp.arappofficial.Activities.DetailActivity;
 import ir.arapp.arappofficial.Activities.ServiceActivity;
+import ir.arapp.arappofficial.Adapter.CategoryItemAdapter;
 import ir.arapp.arappofficial.AppService.DrawerLocker;
+import ir.arapp.arappofficial.AppService.RetrofitClient;
+import ir.arapp.arappofficial.Data.CategoryItem;
+import ir.arapp.arappofficial.Data.SliderItem;
 import ir.arapp.arappofficial.R;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class CategoryFragment extends Fragment implements View.OnClickListener
+public class CategoryFragment extends Fragment
 {
     //Variables
-    private RoundedImageView restaurant;
-    private RoundedImageView fastFood;
-    private RoundedImageView cafe;
-    private RoundedImageView hotel;
-    private RoundedImageView restRoom;
-    private RoundedImageView shopCenter;
+    private LottieAnimationView lottieAnimationView;
+    private RecyclerView recyclerView;
+    private ArrayList<CategoryItem> categoryItems;
+    private RecyclerView.Adapter adapter;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
@@ -50,25 +67,20 @@ public class CategoryFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.fragment_category, container, false);
 
         //Hooks
-        restaurant = view.findViewById(R.id.restaurant_category);
-        fastFood = view.findViewById(R.id.fastFood_category);
-        cafe = view.findViewById(R.id.cafe_category);
-        hotel = view.findViewById(R.id.hotel_category);
-        restRoom = view.findViewById(R.id.restRoom_category);
-        shopCenter = view.findViewById(R.id.shopCenter_category);
+        lottieAnimationView = view.findViewById(R.id.loadingCategory);
+        recyclerView = view.findViewById(R.id.categoryRecyclerView);
 
         //Drawer layout
         ((DrawerLocker) Objects.requireNonNull(getActivity())).setDrawerLocked(true);
 
-        //OnClick
-        restaurant.setOnClickListener(this);
-        fastFood.setOnClickListener(this);
-        cafe.setOnClickListener(this);
-        hotel.setOnClickListener(this);
-        restRoom.setOnClickListener(this);
-        shopCenter.setOnClickListener(this);
+        //Get Category
+        if (checkConnection())
+        {
+            categoryItems = new ArrayList<>();
+            getCategory();
+        }
 
-        return  view;
+        return view;
     }
 
     //To hide toolbar
@@ -88,53 +100,75 @@ public class CategoryFragment extends Fragment implements View.OnClickListener
         Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).show();
     }
 
-    @Override
-    public void onClick(View view)
+    //check internet connection ...
+    private boolean checkConnection()
     {
-        Intent categoryIntent = new Intent(getActivity(), ServiceActivity.class);
-        switch (view.getId())
+        ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getActivity()).getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (null != networkInfo)
         {
-            case R.id.restaurant_category:
-                categoryIntent.putExtra("name", "رستوران");
-                startActivity(categoryIntent);
-                break;
-            case R.id.fastFood_category:
-                categoryIntent.putExtra("name", "فست فود");
-                startActivity(categoryIntent);
-                break;
-            case R.id.cafe_category:
-                categoryIntent.putExtra("name", "کافه");
-                startActivity(categoryIntent);
-                break;
-            case R.id.hotel_category:
-                categoryIntent.putExtra("name", "هتل");
-                startActivity(categoryIntent);
-                break;
-            case R.id.restRoom_category:
-                categoryIntent.putExtra("name", "مسافرخانه");
-                startActivity(categoryIntent);
-                break;
-            case R.id.shopCenter_category:
-                categoryIntent.putExtra("name", "مراکز خرید");
-                startActivity(categoryIntent);
-                break;
-            default:
-                break;
+            return true;
+        }
+        else
+        {
+            StyleableToast.makeText(getActivity().getApplicationContext(), "عدم اتصال به اینترنت!", Toast.LENGTH_LONG, R.style.toastTheme).show();
+            return false;
         }
     }
+
+    //Get category from database and set Adapter
+    private void getCategory()
+    {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .getCategory();
+
+        call.enqueue(new Callback<ResponseBody>()
+        {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+            {
+                if (response.isSuccessful())
+                {
+                    try
+                    {
+                        String responseBody = Objects.requireNonNull(response.body()).string();
+                        JSONArray jsonArray = new JSONArray(responseBody);
+                        for (int i = 0; i < jsonArray.length(); i++)
+                        {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            String image = jsonObject.getString("image");
+                            String text = jsonObject.getString("title");
+                            categoryItems.add(new CategoryItem(id,  text, image));
+                        }
+                        setAdapter();
+                    }
+                    catch (IOException | JSONException ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t)
+            {
+                StyleableToast.makeText(Objects.requireNonNull(getContext()), t.getMessage(), Toast.LENGTH_LONG, R.style.toastTheme).show();
+            }
+        });
+    }
+    private void setAdapter()
+    {
+        lottieAnimationView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        adapter = new CategoryItemAdapter(getContext(), categoryItems);
+        recyclerView.setAdapter(adapter);
+    }
+
 }
 
-/*
-Transformation transformation = new RoundedTransformationBuilder()
-          .borderColor(Color.BLACK)
-          .borderWidthDp(3)
-          .cornerRadiusDp(30)
-          .oval(false)
-          .build();
-
-Picasso.with(context)
-    .load(url)
-    .fit()
-    .transform(transformation)
-    .into(imageView);
- */

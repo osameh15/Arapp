@@ -83,7 +83,8 @@
             android:fontFamily="@font/vazir"
             android:textSize="14sp"
             android:textColor="@color/text5"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:checked="true"/>
 
         <TextView
             android:id="@+id/forgetPasswordLogin"

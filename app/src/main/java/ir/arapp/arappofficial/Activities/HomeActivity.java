@@ -346,6 +346,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 .load(image)
                 .placeholder(R.drawable.icon)
                 .error(R.drawable.icon)
+                .override(500, 500)
                 .into(imageView);
     }
 

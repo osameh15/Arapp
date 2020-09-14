@@ -131,6 +131,23 @@ public class HomeFragment extends Fragment
         return view;
     }
 
+    //check internet connection ...
+    private boolean checkConnection()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getActivity()).getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (null != networkInfo)
+        {
+            return true;
+        }
+        else
+        {
+            StyleableToast.makeText(getActivity().getApplicationContext(), "عدم اتصال به اینترنت!", Toast.LENGTH_LONG, R.style.toastTheme).show();
+            return false;
+        }
+    }
+
     //Slider news
     private void getNewsData()
     {
@@ -327,23 +344,6 @@ public class HomeFragment extends Fragment
 
         adapter = new CategoryServiceAdapter(getActivity(), servicesData);
         shopCenterRecyclerView.setAdapter(adapter);
-    }
-
-    //check internet connection ...
-    private boolean checkConnection()
-    {
-        ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getActivity()).getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        if (null != networkInfo)
-        {
-            return true;
-        }
-        else
-        {
-            StyleableToast.makeText(getActivity().getApplicationContext(), "عدم اتصال به اینترنت!", Toast.LENGTH_LONG, R.style.toastTheme).show();
-            return false;
-        }
     }
 
     //Liquid refresh layout

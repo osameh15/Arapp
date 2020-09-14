@@ -103,29 +103,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.github.ybq.android.spinkit.SpinKitView
+            <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/loadingPictureProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:SpinKit_Color="@color/colorPrimary"
-                app:SpinKit_Style="DoubleBounce"
-                style="@style/SpinKitView.Large.DoubleBounce"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="100dp"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/loadingTextProfile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="@string/loading"
-                android:fontFamily="@font/vazir_black"
-                android:textColor="@color/splitComplementary2"
-                android:layout_marginTop="10dp"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:layout_below="@id/loadingPictureProfile"
+                android:layout_height="300dp"
+                android:layout_centerInParent="true"
+                app:lottie_fileName="loading.json"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
                 android:visibility="gone"/>
 
             <LinearLayout

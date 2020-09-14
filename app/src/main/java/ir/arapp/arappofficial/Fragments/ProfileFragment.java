@@ -27,6 +27,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -69,8 +70,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
     private TextView city;
     private TextView created_at;
     private Bitmap bitmap;
-    private SpinKitView loadingPic;
-    private TextView loadingText;
+    private LottieAnimationView loading;
     //Session Manager
     private SessionManager sessionManager;
     private String phone;
@@ -104,8 +104,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
         city = view.findViewById(R.id.cityProfile);
         created_at = view.findViewById(R.id.created_at);
         cardViewLayout = view.findViewById(R.id.cardViewLayoutProfile);
-        loadingPic = view.findViewById(R.id.loadingPictureProfile);
-        loadingText = view.findViewById(R.id.loadingTextProfile);
+        loading = view.findViewById(R.id.loadingPictureProfile);
         //Session Manager
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         phone = sessionManager.getUserPhone();
@@ -378,8 +377,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
     }
     private void uploadImage()
     {
-        loadingPic.setVisibility(View.VISIBLE);
-        loadingText.setVisibility(View.VISIBLE);
+        loading.setVisibility(View.VISIBLE);
         cardViewLayout.setVisibility(View.GONE);
 
         Call<ResponseBody> call = RetrofitClient
@@ -403,16 +401,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
                         if (!error)
                         {
                             cardViewLayout.setVisibility(View.VISIBLE);
-                            loadingText.setVisibility(View.GONE);
-                            loadingPic.setVisibility(View.GONE);
+                            loading.setVisibility(View.GONE);
                             StyleableToast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(),
                                     message, Toast.LENGTH_LONG, R.style.toastTheme).show();
                         }
                         else
                         {
                             cardViewLayout.setVisibility(View.VISIBLE);
-                            loadingText.setVisibility(View.GONE);
-                            loadingPic.setVisibility(View.GONE);
+                            loading.setVisibility(View.GONE);
                             StyleableToast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(),
                                     message, Toast.LENGTH_LONG, R.style.toastTheme).show();
                         }
@@ -428,8 +424,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
             public void onFailure(Call<ResponseBody> call, Throwable t)
             {
                 cardViewLayout.setVisibility(View.VISIBLE);
-                loadingText.setVisibility(View.GONE);
-                loadingPic.setVisibility(View.GONE);
+                loading.setVisibility(View.GONE);
                 StyleableToast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(),
                         "خطا در اتصال به سرور", Toast.LENGTH_LONG, R.style.toastTheme).show();
             }
@@ -442,6 +437,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
                 .load(image)
                 .placeholder(R.drawable.icon)
                 .error(R.drawable.icon)
+                .override(500, 500)
                 .into(profilePicture);
     }
 }
