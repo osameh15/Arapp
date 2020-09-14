@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.ramotion.foldingcell.FoldingCell;
 
 import java.util.ArrayList;
@@ -80,8 +81,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     static class NotificationAdapterHolder extends RecyclerView.ViewHolder
     {
         private FoldingCell foldingCell;
-        private ImageView messageImage;
-        private ImageView messageImageContent;
+        private RoundedImageView messageImage;
+        private RoundedImageView messageImageContent;
         private TextView messageTitle;
         private TextView messageSubtitle;
         private TextView messageTextContent;
