@@ -14,7 +14,7 @@
         android:id="@+id/categoryPicture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         app:riv_corner_radius="15dp"
         app:riv_mutate_background="false"
         app:riv_tile_mode="clamp"

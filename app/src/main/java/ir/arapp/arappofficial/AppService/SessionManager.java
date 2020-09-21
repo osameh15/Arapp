@@ -23,6 +23,7 @@ public class SessionManager
     //shared preference filename ...
     private static final String PREF_NAME = "arapp";
     private static final String KEY_IS_LOGEDIN = "isLoggedIn";
+    private static final String KEY_SERVICE_PROVIDER = "serviceType";
     private static final String KEY_PHONE = "phoneNumber";
     private static final String KEY_VERSION_NAME = "versionName";
 
@@ -59,6 +60,16 @@ public class SessionManager
         Log.d(TAG, "user login session modified!");
     }
 
+    //Set service type of providers ...
+    public void setServiceProvider(String serviceProvider)
+    {
+        editor.putString(KEY_SERVICE_PROVIDER, serviceProvider);
+        //commit change ...
+        editor.commit();
+
+        Log.d(TAG, "Service type session modified!");
+    }
+
     //set user phone Number  and session modified...
     public void setUserPhone(String userPhone)
     {
@@ -83,6 +94,12 @@ public class SessionManager
     public boolean isLoggedIn()
     {
         return sharedPreferences.getBoolean(KEY_IS_LOGEDIN, false);
+    }
+
+    //get service type of providers...
+    public String getServiceProvider()
+    {
+        return sharedPreferences.getString(KEY_SERVICE_PROVIDER, "");
     }
 
     //get user phone number session modified ...

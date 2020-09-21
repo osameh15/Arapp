@@ -160,7 +160,9 @@ public class LoginActivity extends AppCompatActivity
                             String message = jsonObject.getString("error_msg");
                             if (!error)
                             {
+                                final String serviceType = jsonObject.getString("service");
                                 sessionManager.setUserPhone(phone);
+                                sessionManager.setServiceProvider(serviceType);
                                 loginLoading(message, true);
                             }
                             else

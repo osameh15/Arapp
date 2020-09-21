@@ -69,11 +69,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
     private TextView name;
     private TextView city;
     private TextView created_at;
+    private TextView serviceType;
     private Bitmap bitmap;
     private LottieAnimationView loading;
     //Session Manager
     private SessionManager sessionManager;
     private String phone;
+    private String serviceProvider;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
@@ -103,11 +105,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
         name = view.findViewById(R.id.profileName);
         city = view.findViewById(R.id.cityProfile);
         created_at = view.findViewById(R.id.created_at);
+        serviceType = view.findViewById(R.id.service_type);
         cardViewLayout = view.findViewById(R.id.cardViewLayoutProfile);
         loading = view.findViewById(R.id.loadingPictureProfile);
         //Session Manager
         sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         phone = sessionManager.getUserPhone();
+        serviceProvider = sessionManager.getServiceProvider();
+
+        //Service application divider ...
+        serviceDivider();
 
         //OnClick()
         editProfile.setOnClickListener(this);
@@ -160,6 +167,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
         {
             StyleableToast.makeText(getActivity().getApplicationContext(), "عدم اتصال به اینترنت!", Toast.LENGTH_LONG, R.style.toastTheme).show();
             return false;
+        }
+    }
+
+    //Service application divider ...
+    private void serviceDivider()
+    {
+        if (serviceProvider.equals("سرویس گیرنده"))
+        {
+            addService.setVisibility(View.GONE);
+            myService.setVisibility(View.GONE);
+            showComments.setVisibility(View.GONE);
+            showRating.setVisibility(View.GONE);
         }
     }
 
@@ -239,6 +258,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
             city.setText(province + "/" + cityText);
         }
         created_at.setText("تاریخ ایجاد حساب کاربری:  " + date);
+        serviceType.setText(serviceProvider);
     }
 
     @Override

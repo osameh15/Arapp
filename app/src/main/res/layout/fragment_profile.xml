@@ -16,8 +16,28 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:padding="10dp"
             android:background="@drawable/profile_header_bg">
+
+            <FrameLayout
+                android:layout_width="95dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rate_normal_shape"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="3dp">
+
+                <TextView
+                    android:id="@+id/service_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="12sp"
+                    android:fontFamily="@font/vazir"
+                    android:textColor="@color/text6"
+                    android:layout_gravity="center"
+                    android:gravity="center"/>
+
+            </FrameLayout>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/nav_cardViewProfile"
@@ -475,11 +495,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
                         android:text=""
                         android:textSize="14sp"
                         android:fontFamily="@font/vazir"
                         android:textColor="@color/text6"
-                        android:layout_centerVertical="true"
                         android:layout_alignParentStart="true"/>
 
                 </RelativeLayout>
