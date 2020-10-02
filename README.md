@@ -1,6 +1,6 @@
 # Arapp
 an rating application. </br>
-Best application for rate and comment on services.</br>
+Best application for rate and comment on services.</br> </br>
 <img src="/Images/AppIcon.jpg" height="400"> <img src="/Images/SplashScreen.jpg" height="400">
 
 # Home Activity
