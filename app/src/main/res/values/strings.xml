@@ -99,7 +99,10 @@
     <string name="text_service">توضیحات کامل از سرویس</string>
     <string name="address">نشانی</string>
     <string name="time_activity">زمان شروع و پایان فعالیت</string>
+    <string name="time_build">سال افتتاح سرویس</string>
     <string name="set_timer">تنظیم زمان</string>
+    <string name="set_region">ثبت موقعیت مکانی</string>
+    <string name="set_build_date">تنظیم سال افتتاح</string>
 
     <!-- Pop Up Text View -->
     <string name="contact_us_text">جهت ارتباط با آراپ میتوانید از طریق شماره و یا ایمیل زیر تماس حاصل فرمایید \nهمچنین جهت ارسال مشکلات احتمالی با ایمیل آراپ در ارتباط باشید</string>
